@@ -1,0 +1,21 @@
+# Ignore môi trường ảo
+venv/
+.env
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore file log, cache
+*.log
+*.sqlite3
+db.sqlite3
+
+# Ignore file hệ thống
+.DS_Store
+Thumbs.db
+
+# Ignore file requirements cũ hoặc backup
+*.bak
+# vsc
+.vscode/
