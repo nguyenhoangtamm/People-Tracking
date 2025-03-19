@@ -1,58 +1,76 @@
 # People Tracking with YOLO and ByteTrack
 
-This project tracks people using the YOLO and ByteTrack algorithms, counting individuals passing a marker and categorizing their direction as right-to-left or left-to-right.
+This project tracks people using the YOLO algorithm, counting individuals who pass through a marked area. It can be applied to situations like counting people moving up and down stairs in a predefined area and tracking their paths.
 
 # Demo
-Our crossing line is between the pole and the noticeboard bottom.
 
-https://github.com/rushidarge/People-Tracking-and-Counting/assets/39642887/b0d8f22c-dd9a-44fa-a9d9-0cb92b07d74c
-
-
+https://github.com/nguyenhoangtamm/People-Tracking/output.avi
 
 ## Table of Contents
-- [Description](#description)
-- [Working](#Working)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Features](#features)
-- [Limitation](#Limitation)
-- [Bibliography](#Bibliography)
+
+-   [Description](#description)
+-   [Working](#Working)
+-   [Installation](#installation)
+-   [Usage](#usage)
+-   [Features](#features)
+-   [Limitation](#Limitation)
+-   [Bibliography](#Bibliography)
 
 ## Description
-This project utilizes the YOLO (You Only Look Once) object detection algorithm combined with the ByteTrack multi-object tracking algorithm to monitor and count people passing a specified marker. The direction of movement (right-to-left or left-to-right) is recorded, and counters are incremented accordingly.
+
+This project utilizes the YOLO (You Only Look Once) object detection algorithm combined with the ByteTrack multi-object tracking algorithm to monitor and count people passing through a marked area. It can be applied to scenarios such as counting individuals moving up and down stairs within a predefined zone and tracking their paths.
 
 ## Working:
 
 1. **Read Video**:
-    - The code starts by loading a video or connecting to a live camera feed. This is like pressing play on a video player.
 
-2. **Finding People (YOLO)**:
-    - The code uses a deep learning model called YOLO (You Only Look Once) to find people in each frame of the video. Think of YOLO as a really smart pair of glasses that can spot people instantly in any picture.
+    - The script starts by selecting a video file using the `choose_video` function. If no video is selected, the script exits.
 
-3. **Tracking People (ByteTrack)**:
-    - Once YOLO spots a person, ByteTrack takes over to follow that person as they move from one frame to the next. ByteTrack is like a high-tech tracking algorithm that keeps an eye on each person so it knows where they go.
+2. **Load YOLO Model**:
 
-4. **Counting People**:
-    - The code has a "marker" or an imaginary line in the video (that it gets from the `mask.png` file). Whenever a person crosses this line, the code notes down which direction they are moving:
-        - If they cross from right to left, one counter goes up.
-        - If they cross from left to right, another counter goes up.
+    - The YOLO model is loaded from the specified path in the configuration file.
 
-5. **Displaying Results**:
-    - The code continuously updates and shows the counts for how many people have crossed the line in each direction. This is like a scoreboard that keeps track of the movement of people in real time.
+3. **Open Video**:
 
+    - The selected video is opened using OpenCV's `VideoCapture`. The video dimensions and frame rate are retrieved.
+
+4. **Select Region**:
+
+    - The user is prompted to select a region of interest in the video by clicking on the video frame. The selected region is used to create a mask.
+
+5. **Create Mask**:
+
+    - A mask is created based on the selected region. This mask is used to determine if a detected person is within the region.
+
+6. **Process Video Frames**:
+
+    - The video frames are processed in a loop. For each frame:
+        - The YOLO model detects objects in the frame.
+        - The detected objects are tracked using ByteTrack.
+        - If a detected person is within the selected region, their ID is noted, and their image is saved.
+
+7. **Save Results**:
+
+    - The processed video frames are saved to an output video file. Detected persons within the region are saved as images.
+
+8. **Display Results**:
+    - The processed video frames are displayed in a window. The script continues to process frames until the video ends or the user exits.
 
 ## Installation
 
 1. Clone the repository:
+
     ```bash
-    git clone https://github.com/rushidarge/People-Tracking-and-Counting.git
-    cd People-Tracking-and-Counting
+    git clone https://github.com/nguyenhoangtamm/People-Tracking.git
+    cd People-Tracking
     ```
 
 2. Create and activate a virtual environment (optional but recommended):
+
     ```bash
-    python3 -m venv venv
-    source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+    python -m venv venv
+    venv\Scripts\activate  # On Windows
+    source venv/bin/activate  # On macOS/Linux
     ```
 
 3. Install the required dependencies:
@@ -66,26 +84,27 @@ This project utilizes the YOLO (You Only Look Once) object detection algorithm c
 2. Update your path for video, mask, and out in config.json
 3. Run the main tracking script:
     ```bash
-    python get_count_dynamic.py
+    python main.py
     ```
 4. View the results and counters in the console output or as specified in the configuration.
 5. Your video is saved in videos/predicition_output/
 
 ## Features
-- Person detection using YOLO
-- Multi-object tracking with ByteTrack
-- Direction-based counting
-- Easy configuration and customization
+
+-   Person detection using YOLO
+-   Multi-object tracking with ByteTrack
+-   Direction-based counting
+-   Easy configuration and customization
 
 ## Limitation
-- We need to tune our logic sometimes we miss a person from counting.
-- If people are overlapping we lose track of them.
-- Two people walking simultaneously then we miss that person in counting, we need to place the camera strategically.
-- To make it real-time we need GPU.
+
+-   The logic may need tuning as it sometimes misses counting a person.
+-   Overlapping people can cause tracking issues.
+-   Simultaneous movement of two people can result in missed counts; strategic camera placement is required.
+-   Real-time processing requires a GPU.
 
 ## Bibliography
-Yolo Model : https://github.com/WongKinYiu/yolov9
 
-Bytetrack Algorithm: https://medium.com/tech-blogs-by-nest-digital/object-tracking-object-detection-tracking-using-bytetrack-0aafe924d292
-
-Ultralytics: https://docs.ultralytics.com/modes/track/
+-   YOLO Model: [https://github.com/WongKinYiu/yolov9](https://github.com/WongKinYiu/yolov9)
+-   ByteTrack Algorithm: [https://medium.com/tech-blogs-by-nest-digital/object-tracking-object-detection-tracking-using-bytetrack-0aafe924d292](https://medium.com/tech-blogs-by-nest-digital/object-tracking-object-detection-tracking-using-bytetrack-0aafe924d292)
+-   Ultralytics: [https://docs.ultralytics.com/modes/track/](https://docs.ultralytics.com/modes/track/)

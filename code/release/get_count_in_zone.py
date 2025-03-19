@@ -70,7 +70,7 @@ mask = np.zeros((h, w), dtype=np.uint8)
 cv2.fillPoly(mask, [np.array(region_pts, np.int32)], 255)
 
 # Video output
-out = cv2.VideoWriter(config["output_video_path"]+"count_in_zone/output.avi", cv2.VideoWriter_fourcc(*"MJPG"), fps, (w, h))
+out = cv2.VideoWriter(config["output_video_path"]+"/count_in_zone/output.avi", cv2.VideoWriter_fourcc(*"MJPG"), fps, (w, h))
 
 # Dictionary lưu tracking
 track_history = defaultdict(lambda: [])
