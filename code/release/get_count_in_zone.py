@@ -14,7 +14,7 @@ cap = cv2.VideoCapture(config["video_path"]+"/7.mp4")  # Chọn video
 
 # Lấy thông số video
 w, h, fps = (int(cap.get(x)) for x in (cv2.CAP_PROP_FRAME_WIDTH, cv2.CAP_PROP_FRAME_HEIGHT, cv2.CAP_PROP_FPS))
-
+video_width, video_height= 700, 500
 # Biến toàn cục để lưu vùng chọn
 region_selected = False
 region_pts = []
@@ -44,7 +44,7 @@ if not ret:
 
 # Chọn vùng trên khung hình đầu tiên
 while True:
-    frame = cv2.resize(frame, (int(w/2), int(h/2)))
+    frame = cv2.resize(frame, (video_width, video_height))
     temp_frame = frame.copy()
     
     if len(region_pts) > 1:
@@ -70,7 +70,7 @@ mask = np.zeros((h, w), dtype=np.uint8)
 cv2.fillPoly(mask, [np.array(region_pts, np.int32)], 255)
 
 # Video output
-out = cv2.VideoWriter(config["output_video_path"]+"/count_in_zone/output.avi", cv2.VideoWriter_fourcc(*"MJPG"), fps, (w, h))
+out = cv2.VideoWriter(config["output_video_path"]+"/count_in_zone/output.avi", cv2.VideoWriter_fourcc(*"MJPG"), fps, (video_width, video_height))
 
 # Dictionary lưu tracking
 track_history = defaultdict(lambda: [])
@@ -82,7 +82,7 @@ count_down = 0
 # Bắt đầu chạy video
 while True:
     ret, im0 = cap.read()
-    im0 = cv2.resize(im0, (int(w/2), int(h/2)))
+    im0 = cv2.resize(im0, (video_width, video_height))
 
     if not ret:
         print("Video kết thúc.")

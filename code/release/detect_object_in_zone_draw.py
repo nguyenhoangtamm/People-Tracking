@@ -62,7 +62,7 @@ cv2.destroyAllWindows()
 mask = np.zeros((h, w), dtype=np.uint8)
 cv2.fillPoly(mask, [np.array(region_pts, np.int32)], 255)
 
-out = cv2.VideoWriter(config["output_video_path"]+"/object_in_zone/output.avi", cv2.VideoWriter_fourcc(*"MJPG"), fps, (w, h))
+out = cv2.VideoWriter(config["output_video_path"]+"/object_in_zone/output.avi", cv2.VideoWriter_fourcc(*"MJPG"), fps, (video_width, video_height))
 frame_count = 0 
 objects_in_region=[]
 

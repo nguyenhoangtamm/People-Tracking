@@ -5,8 +5,6 @@ from config import config
 from ultralytics import YOLO
 from ultralytics.utils.plotting import Annotator, colors
 
-
-
 # Ngưỡng xác định hướng
 threshold = 5  
 
@@ -20,7 +18,7 @@ cap = cv2.VideoCapture(config["video_path"]+"/4.mp4")  # Chọn video
 w, h, fps = (int(cap.get(x)) for x in (3, 4, 5))  # Thay vì CAP_PROP_*
 
 # Video output
-out = cv2.VideoWriter(config["output_video_path"]+"/track_path/output.avi", cv2.VideoWriter_fourcc(*"MJPG"), fps, (w, h))
+out = cv2.VideoWriter(config["output_video_path"]+"/track_path/output.avi", cv2.VideoWriter_fourcc(*"MJPG"), fps, (w//4, h//4))
 
 # Dictionary lưu tracking history (tọa độ các đối tượng)
 track_history = defaultdict(list)
