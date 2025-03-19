@@ -4,7 +4,7 @@ This project tracks people using the YOLO algorithm, counting individuals who pa
 
 # Demo
 
-https://github.com/nguyenhoangtamm/People-Tracking/video/predicition_output/count_in_zon/output.avi
+https://github.com/nguyenhoangtamm/People-Tracking/videos/predicition_output/count_in_zon/output.avi
 
 ## Table of Contents
 
