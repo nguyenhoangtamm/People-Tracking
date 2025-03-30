@@ -9,10 +9,10 @@ from ultralytics.utils.plotting import Annotator, colors
 threshold = 5  
 
 # Load YOLO model
-model = YOLO(config["model_path"]+"/yolov9t.pt")
+model = YOLO(config["model_path"]+"/best.pt")
 
 # Mở video
-cap = cv2.VideoCapture(config["video_path"]+"/4.mp4")  # Chọn video
+cap = cv2.VideoCapture(config["video_path"]+"/8.mp4")  # Chọn video
 
 # Lấy thông số video
 w, h, fps = (int(cap.get(x)) for x in (3, 4, 5))  # Thay vì CAP_PROP_*

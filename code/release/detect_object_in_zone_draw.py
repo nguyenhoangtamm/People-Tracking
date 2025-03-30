@@ -6,7 +6,6 @@ from ultralytics import YOLO
 from ultralytics.utils.plotting import Annotator, colors
 from video_selector import choose_video  # Import hàm chọn video
 
-
 selected_video = choose_video()
 
 if not selected_video:
@@ -14,14 +13,20 @@ if not selected_video:
     exit()
 
 # Load model YOLO
-model = YOLO(config["model_path"]+"/yolov9t.pt")
+model = YOLO(config["model_path"]+"/best.pt")
 
 # Mở video
 cap = cv2.VideoCapture(selected_video)
-video_width, video_height= 700, 500
+
 # Lấy thông số video
 w, h, fps = (int(cap.get(x)) for x in (cv2.CAP_PROP_FRAME_WIDTH, cv2.CAP_PROP_FRAME_HEIGHT, cv2.CAP_PROP_FPS))
+# Calculate aspect ratio of the original video
+aspect_ratio = w / h
 
+# Determine the width and height based on a desired width (e.g., 900 pixels)
+desired_width = 900
+video_width = desired_width
+video_height = int(video_width / aspect_ratio)
 # Biến toàn cục để lưu vùng chọn
 region_selected = False
 region_pts = []
@@ -68,10 +73,14 @@ objects_in_region=[]
 
 while True:
     ret, im0 = cap.read()
-    im0 = cv2.resize(im0, (video_width, video_height))
     if not ret:
         print("Video kết thúc.")
         break
+
+    im0 = cv2.resize(im0, (video_width, video_height))
+    overlay = im0.copy()
+    cv2.polylines(overlay, [np.array(region_pts, np.int32)], isClosed=True, color=(0, 255, 0), thickness=2)
+    cv2.addWeighted(overlay, 0.4, im0, 0.6, 0, im0)
 
     annotator = Annotator(im0, line_width=2)
     results = model.track(im0, persist=True)
@@ -84,17 +93,15 @@ while True:
         for box, class_id, track_id in zip(boxes, class_id, track_ids):
             bottom_midpoint_x = int((box[0] + box[2]) / 2)
             bottom_midpoint_y = int(box[3])
-            if 0 <= bottom_midpoint_x < w and 0 <= bottom_midpoint_y < h:
-                if mask[bottom_midpoint_y, bottom_midpoint_x] == 255 and model.names[int(class_id)] == "person":
-                    label = f"ID: {track_id} (IN REGION)"
+            if 0 <= bottom_midpoint_x < w and 0 <= bottom_midpoint_y < h :
+                if mask[bottom_midpoint_y, bottom_midpoint_x] == 255 :
+                    label = f"(IN REGION)"
                     color = (0, 0, 255)
                     if track_id not in objects_in_region:
                         objects_in_region.append(track_id)  
                         # Cắt ảnh đối tượng nhưng bỏ những box bao quanh object
                         x1, y1, x2, y2 = map(int, box)
                         cropped_person = im0[y1:y2, x1:x2]
-                        # Loại bỏ các box bao quanh object
-                        cropped_person = cv2.copyMakeBorder(cropped_person, 10, 10, 10, 10, cv2.BORDER_CONSTANT, value=(0, 0, 0))
 
                         # Kiểm tra kích thước hợp lệ trước khi lưu
                         if cropped_person.size > 0:
@@ -103,10 +110,9 @@ while True:
                             print(f"Đã lưu ảnh: {save_path}")
 
                 else:
-                    label = f"ID: {track_id}"
+                    label = ""
                     color = colors(track_id, True)
-                annotator.box_label(box, label, color=color)
-
+                annotator.box_label(box,label, color=color)
 
     out.write(im0)
     cv2.imshow("Object Detection", im0)
@@ -117,4 +123,3 @@ while True:
 cap.release()
 out.release()
 cv2.destroyAllWindows()
-

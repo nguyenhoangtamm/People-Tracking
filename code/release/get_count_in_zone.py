@@ -6,7 +6,7 @@ from ultralytics import YOLO
 from ultralytics.utils.plotting import Annotator, colors
 from video_selector import choose_video  # Import hàm chọn video
 
-model = YOLO(config["model_path"]+"/yolov9t.pt")
+model = YOLO(config["model_path"]+"/best.pt")
 
 # Mở video
 cap = cv2.VideoCapture(config["video_path"]+"/7.mp4")  # Chọn video
@@ -87,6 +87,9 @@ while True:
     if not ret:
         print("Video kết thúc.")
         break
+    overlay = im0.copy()
+    cv2.polylines(overlay, [np.array(region_pts, np.int32)], isClosed=True, color=(0, 255, 0), thickness=2)
+    cv2.addWeighted(overlay, 0.4, im0, 0.6, 0, im0)
 
     annotator = Annotator(im0, line_width=2)
     results = model.track(im0, persist=True)
@@ -102,10 +105,10 @@ while True:
             bottom_midpoint_y = int(box[3])
 
             # Ensure the midpoint coordinates are within the bounds of the mask
-            if 0 <= bottom_midpoint_x < w and 0 <= bottom_midpoint_y < h:
+            if 0 <= bottom_midpoint_x < w and 0 <= bottom_midpoint_y < h :
                 # Kiểm tra điểm có trong vùng không
                 in_region = (mask[bottom_midpoint_y, bottom_midpoint_x] == 255) 
-                label = f"ID: {track_id} (IN REGION)" if in_region else f"ID: {track_id}"
+                label = f"(IN REGION)" if in_region else f""
                 color = (0, 0, 255) if in_region else colors(track_id, True)
 
                 # vector tracking
@@ -125,12 +128,12 @@ while True:
                     vector_direction = (vector_pts[1][0] - vector_pts[0][0], vector_pts[1][1] - vector_pts[0][1])
                     movement_direction = (current_pos[0] - last_pos[0], current_pos[1] - last_pos[1])
                     dot_product = vector_direction[0] * movement_direction[0] + vector_direction[1] * movement_direction[1]
-                    if  model.names[int(class_id)] == "person":
+                    
                     # Đếm số người đi lên và đi xuống
-                        if dot_product < 0 and( not in_region) and mask[last_pos[1], last_pos[0]] == 255 and mask[last_pos_2[1], last_pos_2[0]] == 255 and mask[last_pos_3[1], last_pos_3[0]] == 255:
-                            count_up += 1
-                        elif dot_product > 0 and in_region and mask[last_pos[1], last_pos[0]] != 255:
-                            count_down += 1
+                    if dot_product < 0 and( not in_region) and mask[last_pos[1], last_pos[0]] == 255 and mask[last_pos_2[1], last_pos_2[0]] == 255 and mask[last_pos_3[1], last_pos_3[0]] == 255:
+                        count_up += 1
+                    elif dot_product > 0 and in_region and mask[last_pos[1], last_pos[0]] != 255:
+                        count_down += 1
                 # Vẽ bounding box và label
                 annotator.box_label(box, label, color=color)
 
